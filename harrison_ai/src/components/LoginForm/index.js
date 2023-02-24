@@ -14,8 +14,8 @@ import validator from 'email-validator';
 export default function LoginForm() {
   const SUCCESSFUL_LOGIN_MESSAGE = "Login Successful";
   const [showAlert, setShowAlert] = useState(false);
-  const [invalidEmail, setInvalidEmail] = useState(false);
-  const [invalidPassword, setInvalidPassword] = useState(false);
+  const [invalidEmail, setInvalidEmail] = useState({status: false, message: ""});
+  const [invalidPassword, setInvalidPassword] = useState({status: false, message: ""});
 
   const validatePassword = (password) => {
     const specialCharacters = '[`!@#$%^&*()_+-=[]{};\':"\\|,.<>/?~]/';
@@ -30,7 +30,6 @@ export default function LoginForm() {
     let hasSpecialCharacter = false;
 
     for (let passwordCharacter of password.split('')) {
-      console.log(Number.isInteger(passwordCharacter), 'characcccc')
       if (alphabets.includes(String(passwordCharacter).toLowerCase())) {
         if (passwordCharacter === passwordCharacter.toUpperCase()) {
           hasUpperCase = true;
@@ -61,11 +60,10 @@ export default function LoginForm() {
     const emailIsInvalid = !validator.validate(email);
     const passwordIsInvalid = !validatePassword(password);
     if(emailIsInvalid || passwordIsInvalid) {
-      setInvalidEmail(emailIsInvalid);
-      setInvalidPassword(passwordIsInvalid);
+      setInvalidEmail({status: true, message: "Please enter a valid email."});
+      setInvalidPassword({status: true, message: "Please ensure your password is at least 8 characters long and includes an uppercase letter, a lower case letter, a digit, and a special character."});
       return false;
     }
-    console.log(emailIsInvalid, passwordIsInvalid, 'CHECK VALIDITY')
     return true;
   }
 
@@ -78,8 +76,8 @@ export default function LoginForm() {
     });
     const formIsValid = validateForm(event);
     if (formIsValid) {
-      setInvalidEmail(false);
-      setInvalidPassword(false);
+      setInvalidEmail({status: false, message: ""});
+      setInvalidPassword({status: false, message: ""});
       setShowAlert(true);
     }
   };
@@ -138,7 +136,8 @@ export default function LoginForm() {
               name="email"
               autoComplete="email"
               autoFocus
-              error={invalidEmail}
+              error={invalidEmail.status}
+              helperText={invalidEmail.message}
             />
             <TextField
               margin="normal"
@@ -149,7 +148,8 @@ export default function LoginForm() {
               type="password"
               id="password"
               autoComplete="current-password"
-              error={invalidPassword}
+              error={invalidPassword.status}
+              helperText={invalidPassword.message}
             />
             <Button
               type="submit"

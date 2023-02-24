@@ -40,14 +40,12 @@ export default function LoginForm() {
         }
       }
       if (Number.isInteger(Number(passwordCharacter))) {
-        console.log('GETTING HERE?? ')
         hasNumericalValue = true;
       }
       if (specialCharacters.split('').includes(passwordCharacter)) {
         hasSpecialCharacter = true;
       }
     }
-    console.log(hasUpperCase, hasLowerCase, hasNumericalValue, hasSpecialCharacter, 'HASTHEMALL')
     if(!hasUpperCase || !hasLowerCase || !hasNumericalValue || !hasSpecialCharacter) {
       return false;
     }

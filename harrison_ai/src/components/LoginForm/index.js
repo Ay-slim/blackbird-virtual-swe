@@ -12,6 +12,7 @@ import validator from 'email-validator';
 
 
 export default function LoginForm() {
+  const SUCCESSFUL_LOGIN_MESSAGE = "Login Successful";
   const [showAlert, setShowAlert] = useState(false);
   const [invalidEmail, setInvalidEmail] = useState(false);
   const [invalidPassword, setInvalidPassword] = useState(false);
@@ -92,9 +93,9 @@ export default function LoginForm() {
           open={showAlert}
           autoHideDuration={6000}
           onClose={() => setShowAlert(false)}
-          message={showAlert}
+          message={SUCCESSFUL_LOGIN_MESSAGE}
         >
-          <Alert>{showAlert}</Alert>
+          <Alert>{SUCCESSFUL_LOGIN_MESSAGE}</Alert>
         </Snackbar>
       }
       <Grid

@@ -8,6 +8,7 @@ import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 import logo from '../../assets/logo.svg';
+import validator from 'email-validator';
 
 
 export default function LoginForm() {
@@ -19,7 +20,12 @@ export default function LoginForm() {
     const password = data.get('password');
 
     // Add validation code here
-
+    const isValidEmail = validator.validate(email);
+    console.log(isValidEmail, 'VALID EMAIL');
+    if(!isValidEmail) {
+      setShowAlert("Invalid Email");
+      throw new Error("Invalid Email");
+    }
   }
 
   const handleSubmit = (event) => {

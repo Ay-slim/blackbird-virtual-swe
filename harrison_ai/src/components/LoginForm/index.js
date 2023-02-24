@@ -13,19 +13,61 @@ import validator from 'email-validator';
 
 export default function LoginForm() {
   const [showAlert, setShowAlert] = useState(false);
+  const [invalidEmail, setInvalidEmail] = useState(false);
+  const [invalidPassword, setInvalidPassword] = useState(false);
+
+  const validatePassword = (password) => {
+    const specialCharacters = '[`!@#$%^&*()_+-=[]{};\':"\\|,.<>/?~]/';
+    const alphabets = 'abcdefghijklmnopqrstuvwxyz';
+    if (password.length <= 8) {
+      return false;
+    }
+
+    let hasLowerCase = false;
+    let hasUpperCase = false;
+    let hasNumericalValue = false;
+    let hasSpecialCharacter = false;
+
+    for (let passwordCharacter of password.split('')) {
+      console.log(Number.isInteger(passwordCharacter), 'characcccc')
+      if (alphabets.includes(String(passwordCharacter).toLowerCase())) {
+        if (passwordCharacter === passwordCharacter.toUpperCase()) {
+          hasUpperCase = true;
+        }
+        if (passwordCharacter === passwordCharacter.toLowerCase()) {
+          hasLowerCase = true;
+        }
+      }
+      if (Number.isInteger(Number(passwordCharacter))) {
+        console.log('GETTING HERE?? ')
+        hasNumericalValue = true;
+      }
+      if (specialCharacters.split('').includes(passwordCharacter)) {
+        hasSpecialCharacter = true;
+      }
+    }
+    console.log(hasUpperCase, hasLowerCase, hasNumericalValue, hasSpecialCharacter, 'HASTHEMALL')
+    if(!hasUpperCase || !hasLowerCase || !hasNumericalValue || !hasSpecialCharacter) {
+      return false;
+    }
+    return true;
+  }
+
   const validateForm = (event) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget);
     const email = data.get('email');
     const password = data.get('password');
-
     // Add validation code here
-    const isValidEmail = validator.validate(email);
-    console.log(isValidEmail, 'VALID EMAIL');
-    if(!isValidEmail) {
-      setShowAlert("Invalid Email");
-      throw new Error("Invalid Email");
+    const emailIsInvalid = !validator.validate(email);
+    const passwordIsInvalid = !validatePassword(password);
+    if(emailIsInvalid || passwordIsInvalid) {
+      setInvalidEmail(emailIsInvalid);
+      setInvalidPassword(passwordIsInvalid);
+      return false;
     }
+    console.log(emailIsInvalid, passwordIsInvalid, 'CHECK VALIDITY')
+    return true;
   }
 
   const handleSubmit = (event) => {
@@ -35,8 +77,12 @@ export default function LoginForm() {
       email: data.get('email'),
       password: data.get('password'),
     });
-    validateForm(event);
-    setShowAlert("Login Successful");
+    const formIsValid = validateForm(event);
+    if (formIsValid) {
+      setInvalidEmail(false);
+      setInvalidPassword(false);
+      setShowAlert(true);
+    }
   };
 
   return (
@@ -93,6 +139,7 @@ export default function LoginForm() {
               name="email"
               autoComplete="email"
               autoFocus
+              error={invalidEmail}
             />
             <TextField
               margin="normal"
@@ -103,6 +150,7 @@ export default function LoginForm() {
               type="password"
               id="password"
               autoComplete="current-password"
+              error={invalidPassword}
             />
             <Button
               type="submit"

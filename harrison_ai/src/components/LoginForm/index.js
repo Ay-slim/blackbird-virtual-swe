@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 import logo from '../../assets/logo.svg';
-import validator from 'email-validator';
+import { validatePassword, validateEmail } from '../../utils/validationLogic';
 
 
 export default function LoginForm() {
@@ -17,47 +17,13 @@ export default function LoginForm() {
   const [invalidEmail, setInvalidEmail] = useState({status: false, message: ""});
   const [invalidPassword, setInvalidPassword] = useState({status: false, message: ""});
 
-  const validatePassword = (password) => {
-    const specialCharacters = '[`!@#$%^&*()_+-=[]{};\':"\\|,.<>/?~]/';
-    const alphabets = 'abcdefghijklmnopqrstuvwxyz';
-    if (password.length <= 8) {
-      return false;
-    }
-
-    let hasLowerCase = false;
-    let hasUpperCase = false;
-    let hasNumericalValue = false;
-    let hasSpecialCharacter = false;
-
-    for (let passwordCharacter of password.split('')) {
-      if (alphabets.includes(String(passwordCharacter).toLowerCase())) {
-        if (passwordCharacter === passwordCharacter.toUpperCase()) {
-          hasUpperCase = true;
-        }
-        if (passwordCharacter === passwordCharacter.toLowerCase()) {
-          hasLowerCase = true;
-        }
-      }
-      if (Number.isInteger(Number(passwordCharacter))) {
-        hasNumericalValue = true;
-      }
-      if (specialCharacters.split('').includes(passwordCharacter)) {
-        hasSpecialCharacter = true;
-      }
-    }
-    if(!hasUpperCase || !hasLowerCase || !hasNumericalValue || !hasSpecialCharacter) {
-      return false;
-    }
-    return true;
-  }
-
   const validateForm = (event) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget);
     const email = data.get('email');
     const password = data.get('password');
     // Add validation code here
-    const emailIsInvalid = !validator.validate(email);
+    const emailIsInvalid = !validateEmail(email);
     const passwordIsInvalid = !validatePassword(password);
     if(emailIsInvalid || passwordIsInvalid) {
       setInvalidEmail({status: true, message: "Please enter a valid email."});
@@ -69,11 +35,6 @@ export default function LoginForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
     const formIsValid = validateForm(event);
     if (formIsValid) {
       setInvalidEmail({status: false, message: ""});
